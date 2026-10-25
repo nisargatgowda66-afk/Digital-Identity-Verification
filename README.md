@@ -1,258 +1,105 @@
-# jiti
+# ⚡️ Lightning CSS
 
-<!-- automd:badges color=F0DB4F bundlephobia -->
+An extremely fast CSS parser, transformer, and minifier written in Rust. Use it with [Parcel](https://parceljs.org), as a standalone library or CLI, or via a plugin with any other tool.
 
-[![npm version](https://img.shields.io/npm/v/jiti?color=F0DB4F)](https://npmjs.com/package/jiti)
-[![npm downloads](https://img.shields.io/npm/dm/jiti?color=F0DB4F)](https://npmjs.com/package/jiti)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/jiti?color=F0DB4F)](https://bundlephobia.com/package/jiti)
+<img width="680" alt="performance and build size charts" src="https://user-images.githubusercontent.com/19409/189022599-28246659-f94a-46a4-9de0-b6d17adb0e22.png#gh-light-mode-only">
+<img width="680" alt="performance and build size charts" src="https://user-images.githubusercontent.com/19409/189022693-6956b044-422b-4f56-9628-d59c6f791095.png#gh-dark-mode-only">
 
-<!-- /automd -->
+## Features
 
-> This is the active development branch. Check out [jiti/v1](https://github.com/unjs/jiti/tree/v1) for legacy v1 docs and code.
+- **Extremely fast** – Parsing and minifying large files is completed in milliseconds, often with significantly smaller output than other tools. See [benchmarks](#benchmarks) below.
+- **Typed property values** – many other CSS parsers treat property values as an untyped series of tokens. This means that each transformer that wants to do something with these values must interpret them itself, leading to duplicate work and inconsistencies. Lightning CSS parses all values using the grammar from the CSS specification, and exposes a specific value type for each property.
+- **Browser-grade parser** – Lightning CSS is built on the [cssparser](https://github.com/servo/rust-cssparser) and [selectors](https://github.com/servo/stylo/tree/main/selectors) crates created by Mozilla and used by Firefox and Servo. These provide a solid general purpose CSS-parsing foundation on top of which Lightning CSS implements support for all specific CSS rules and properties.
+- **Minification** – One of the main purposes of Lightning CSS is to minify CSS to make it smaller. This includes many optimizations including:
+  - Combining longhand properties into shorthands where possible.
+  - Merging adjacent rules with the same selectors or declarations when it is safe to do so.
+  - Combining CSS transforms into a single matrix or vice versa when smaller.
+  - Removing vendor prefixes that are not needed, based on the provided browser targets.
+  - Reducing `calc()` expressions where possible.
+  - Converting colors to shorter hex notation where possible.
+  - Minifying gradients.
+  - Minifying CSS grid templates.
+  - Normalizing property value order.
+  - Removing default property sub-values which will be inferred by browsers.
+  - Many micro-optimizations, e.g. converting to shorter units, removing unnecessary quotation marks, etc.
+- **Vendor prefixing** – Lightning CSS accepts a list of browser targets, and automatically adds (and removes) vendor prefixes.
+- **Browserslist configuration** – Lightning CSS supports opt-in browserslist configuration discovery to resolve browser targets and integrate with your existing tools and config setup.
+- **Syntax lowering** – Lightning CSS parses modern CSS syntax, and generates more compatible output where needed, based on browser targets.
+  - CSS Nesting
+  - Custom media queries (draft spec)
+  - Logical properties
+  * [Color Level 5](https://drafts.csswg.org/css-color-5/)
+    - `color-mix()` function
+    - Relative color syntax, e.g. `lab(from purple calc(l * .8) a b)`
+  - [Color Level 4](https://drafts.csswg.org/css-color-4/)
+    - `lab()`, `lch()`, `oklab()`, and `oklch()` colors
+    - `color()` function supporting predefined color spaces such as `display-p3` and `xyz`
+    - Space separated components in `rgb` and `hsl` functions
+    - Hex with alpha syntax
+    - `hwb()` color syntax
+    - Percent syntax for opacity
+    - `#rgba` and `#rrggbbaa` hex colors
+  - Selectors
+    - `:not` with multiple arguments
+    - `:lang` with multiple arguments
+    - `:dir`
+    - `:is`
+  - Double position gradient stops (e.g. `red 40% 80%`)
+  - `clamp()`, `round()`, `rem()`, and `mod()` math functions
+  - Alignment shorthands (e.g. `place-items`)
+  - Two-value `overflow` shorthand
+  - Media query range syntax (e.g. `@media (width <= 100px)` or `@media (100px < width < 500px)`)
+  - Multi-value `display` property (e.g. `inline flex`)
+  - `system-ui` font family fallbacks
+- **CSS modules** – Lightning CSS supports compiling a subset of [CSS modules](https://github.com/css-modules/css-modules) features.
+  - Locally scoped class and id selectors
+  - Locally scoped custom identifiers, e.g. `@keyframes` names, grid lines/areas, `@counter-style` names, etc.
+  - Opt-in support for locally scoped CSS variables and other dashed identifiers.
+  - `:local()` and `:global()` selectors
+  - The `composes` property
+- **Custom transforms** – The Lightning CSS visitor API can be used to implement custom transform plugins.
 
-## 🌟 Used in
+## Documentation
 
-[Docusaurus](https://docusaurus.io/), [ESLint](https://github.com/eslint/eslint), [FormKit](https://formkit.com/), [Histoire](https://histoire.dev/), [Knip](https://knip.dev/), [Nitro](https://nitro.unjs.io/), [Nuxt](https://nuxt.com/), [PostCSS loader](https://github.com/webpack-contrib/postcss-loader), [Rsbuild](https://rsbuild.dev/), [Size Limit](https://github.com/ai/size-limit), [Slidev](https://sli.dev/), [Tailwindcss](https://tailwindcss.com/), [Tokenami](https://github.com/tokenami/tokenami), [UnoCSS](https://unocss.dev/), [WXT](https://wxt.dev/), [Winglang](https://www.winglang.io/), [Graphql code generator](https://the-guild.dev/graphql/codegen), [Lingui](https://lingui.dev/), [Scaffdog](https://scaff.dog/), [Storybook](https://storybook.js.org), [...UnJS ecosystem](https://unjs.io/), [...60M+ npm monthly downloads](https://npm.chart.dev/jiti), [...6M+ public repositories](https://github.com/unjs/jiti/network/dependents).
+Lightning CSS can be used from [Parcel](https://parceljs.org), as a standalone library from JavaScript or Rust, using a standalone CLI, or wrapped as a plugin within any other tool. See the [Lightning CSS website](https://lightningcss.dev/docs.html) for documentation.
 
-## ✅ Features
+## Benchmarks
 
-- Seamless TypeScript and ESM syntax support for Node.js
-- Seamless interoperability between ESM and CommonJS
-- Asynchronous API to replace `import()`
-- Synchronous API to replace `require()` (deprecated)
-- Super slim and zero dependency
-- Custom resolve aliases
-- Smart syntax detection to avoid extra transforms
-- Node.js native `require.cache` integration
-- Filesystem transpile with hard disk caches
-- ESM Loader support
-- JSX support (opt-in)
+<img width="680" alt="performance and build size charts" src="https://user-images.githubusercontent.com/19409/189022599-28246659-f94a-46a4-9de0-b6d17adb0e22.png#gh-light-mode-only">
+<img width="680" alt="performance and build size charts" src="https://user-images.githubusercontent.com/19409/189022693-6956b044-422b-4f56-9628-d59c6f791095.png#gh-dark-mode-only">
 
-> [!IMPORTANT]
-> To enhance compatibility, jiti `>=2.1` enabled [`interopDefault`](#interopdefault) using a new Proxy method. If you migrated to `2.0.0` earlier, this might have caused behavior changes. In case of any issues during the upgrade, please [report](https://github.com/unjs/jiti/issues) so we can investigate to solve them. 🙏🏼
+```
+$ node bench.js bootstrap-4.css
+cssnano: 544.809ms
+159636 bytes
 
-## 💡 Usage
+esbuild: 17.199ms
+160332 bytes
 
-### CLI
+lightningcss: 4.16ms
+143091 bytes
 
-You can use `jiti` CLI to quickly run any script with TypeScript and native ESM support!
 
-```bash
-npx jiti ./index.ts
+$ node bench.js animate.css
+cssnano: 283.105ms
+71723 bytes
+
+esbuild: 11.858ms
+72183 bytes
+
+lightningcss: 1.973ms
+23666 bytes
+
+
+$ node bench.js tailwind.css
+cssnano: 2.198s
+1925626 bytes
+
+esbuild: 107.668ms
+1961642 bytes
+
+lightningcss: 43.368ms
+1824130 bytes
 ```
 
-### Programmatic
-
-Initialize a jiti instance:
-
-```js
-// ESM
-import { createJiti } from "jiti";
-const jiti = createJiti(import.meta.url);
-
-// CommonJS (deprecated)
-const { createJiti } = require("jiti");
-const jiti = createJiti(__filename);
-```
-
-Import (async) and resolve with ESM compatibility:
-
-```js
-// jiti.import(id) is similar to import(id)
-const mod = await jiti.import("./path/to/file.ts");
-
-// jiti.esmResolve(id) is similar to import.meta.resolve(id)
-const resolvedPath = jiti.esmResolve("./src");
-```
-
-If you need the default export of module, you can use `jiti.import(id, { default: true })` as shortcut to `mod?.default ?? mod`.
-
-```js
-// shortcut to mod?.default ?? mod
-const modDefault = await jiti.import("./path/to/file.ts", { default: true });
-```
-
-CommonJS (sync & deprecated):
-
-```js
-// jiti() is similar to require(id)
-const mod = jiti("./path/to/file.ts");
-
-// jiti.resolve() is similar to require.resolve(id)
-const resolvedPath = jiti.resolve("./src");
-```
-
-You can also pass options as the second argument:
-
-```js
-const jiti = createJiti(import.meta.url, { debug: true });
-```
-
-### Register global ESM loader
-
-You can globally register jiti using [global hooks](https://nodejs.org/api/module.html#initialize). (Important: Requires Node.js > 20)
-
-```js
-import "jiti/register";
-```
-
-Or:
-
-```bash
-node --import jiti/register index.ts
-```
-
-## 🎈 `jiti/native`
-
-You can alias `jiti` to `jiti/native` to directly depend on runtime's [`import.meta.resolve`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import.meta/resolve) and dynamic [`import()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import) support. This allows easing up the ecosystem transition to runtime native support by giving the same API of jiti.
-
-## ⚙️ Options
-
-### `debug`
-
-- Type: Boolean
-- Default: `false`
-- Environment variable: `JITI_DEBUG`
-
-Enable verbose logging. You can use `JITI_DEBUG=1 <your command>` to enable it.
-
-### `fsCache`
-
-- Type: Boolean | String
-- Default: `true`
-- Environment variable: `JITI_FS_CACHE`
-
-Filesystem source cache (enabled by default)
-
-By default (when is `true`), jiti uses `node_modules/.cache/jiti` (if exists) or `{TMP_DIR}/jiti`.
-
-**Note:** It is recommended that this option be enabled for better performance.
-
-### `rebuildFsCache`
-
-- Type: Boolean
-- Default: `false`
-- Environment variable: `JITI_REBUILD_FS_CACHE`
-
-Rebuild filesystem source cache created by `fsCache`.
-
-### `moduleCache`
-
-- Type: String
-- Default: `true`
-- Environment variable: `JITI_MODULE_CACHE`
-
-Runtime module cache (enabled by default).
-
-Disabling allows editing code and importing the same module multiple times.
-
-When enabled, jiti integrates with Node.js native CommonJS cache-store.
-
-### `transform`
-
-- Type: Function
-- Default: Babel (lazy loaded)
-
-Transform function. See [src/babel](./src/babel.ts) for more details
-
-### `sourceMaps`
-
-- Type: Boolean
-- Default `false`
-- Environment variable: `JITI_SOURCE_MAPS`
-
-Add inline source map to transformed source for better debugging.
-
-### `interopDefault`
-
-- Type: Boolean
-- Default: `true`
-- Environment variable: `JITI_INTEROP_DEFAULT`
-
-Jiti combines module exports with the `default` export using an internal Proxy to improve compatibility with mixed CJS/ESM usage. You can check the current implementation [here](https://github.com/unjs/jiti/blob/main/src/utils.ts#L105).
-
-> [!WARNING]
-> This option wraps **all imported modules** in a Proxy, which adds ~25-50ns overhead per property access. For performance-critical hot paths where you access module exports very frequently, consider setting `interopDefault: false` or `JITI_INTEROP_DEFAULT=false`.
-
-### `alias`
-
-- Type: Object
-- Default: -
-- Environment variable: `JITI_ALIAS`
-
-You can also pass an object to the environment variable for inline config. Example: `JITI_ALIAS='{"~/*": "./src/*"}' jiti ...`.
-
-Custom alias map used to resolve IDs.
-
-### `tsconfigPaths`
-
-- Type: Boolean | String
-- Default: `false`
-- Environment variable: `JITI_TSCONFIG_PATHS`
-
-Enable TypeScript [`paths`](https://www.typescriptlang.org/tsconfig/#paths) resolution using [`get-tsconfig`](https://github.com/privatenumber/get-tsconfig).
-
-- `true`: Auto-discover `tsconfig.json` by walking up from the jiti instance's parent path.
-- `string`: Explicit path to a `tsconfig.json` file.
-- `false` (default): Disabled.
-
-### `nativeModules`
-
-- Type: Array
-- Default: ['typescript']
-- Environment variable: `JITI_NATIVE_MODULES`
-
-List of modules (within `node_modules`) to always use native `require()` for them.
-
-### `transformModules`
-
-- Type: Array
-- Default: []
-- Environment variable: `JITI_TRANSFORM_MODULES`
-
-List of modules (within `node_modules`) to transform them regardless of syntax.
-
-### `importMeta`
-
-Parent module's [`import.meta`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import.meta) context to use for ESM resolution. (only used for `jiti/native` import).
-
-### `tryNative`
-
-- Type: Boolean
-- Default: Enabled if bun is detected
-- Environment variable: `JITI_TRY_NATIVE`
-
-Try to use native require and import without jiti transformations first.
-
-### `jsx`
-
-- Type: Boolean | {options}
-- Default: `false`
-- Environment Variable: `JITI_JSX`
-
-Enable JSX support using [`@babel/plugin-transform-react-jsx`](https://babeljs.io/docs/babel-plugin-transform-react-jsx).
-
-See [`test/fixtures/jsx`](./test/fixtures/jsx) for framework integration examples.
-
-## Development
-
-- Clone this repository
-- Enable [Corepack](https://github.com/nodejs/corepack) using `corepack enable`
-- Install dependencies using `pnpm install`
-- Run `pnpm dev`
-- Run `pnpm jiti ./test/path/to/file.ts`
-
-## License
-
-<!-- automd:contributors license=MIT author="pi0" -->
-
-Published under the [MIT](https://github.com/unjs/jiti/blob/main/LICENSE) license.
-Made by [@pi0](https://github.com/pi0) and [community](https://github.com/unjs/jiti/graphs/contributors) 💛
-<br><br>
-<a href="https://github.com/unjs/jiti/graphs/contributors">
-<img src="https://contrib.rocks/image?repo=unjs/jiti" />
-</a>
-
-<!-- /automd -->
-
-<!-- automd:with-automd -->
+For more benchmarks comparing more tools and input, see [here](http://goalsmashers.github.io/css-minification-benchmark/). Note that some of the tools shown perform unsafe optimizations that may change the behavior of the original CSS in favor of smaller file size. Lightning CSS does not do this – the output CSS should always behave identically to the input. Keep this in mind when comparing file sizes between tools.
