@@ -1,3 +1,3 @@
-# caniuse-lite
+# `@rolldown/binding-win32-x64-msvc`
 
-A smaller version of caniuse-db, with only the essentials!
+This is the **x86_64-pc-windows-msvc** binary for `@rolldown/binding`
