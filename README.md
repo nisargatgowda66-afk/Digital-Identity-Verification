@@ -1,143 +1,258 @@
-# graceful-fs
+# jiti
 
-graceful-fs functions as a drop-in replacement for the fs module,
-making various improvements.
+<!-- automd:badges color=F0DB4F bundlephobia -->
 
-The improvements are meant to normalize behavior across different
-platforms and environments, and to make filesystem access more
-resilient to errors.
+[![npm version](https://img.shields.io/npm/v/jiti?color=F0DB4F)](https://npmjs.com/package/jiti)
+[![npm downloads](https://img.shields.io/npm/dm/jiti?color=F0DB4F)](https://npmjs.com/package/jiti)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/jiti?color=F0DB4F)](https://bundlephobia.com/package/jiti)
 
-## Improvements over [fs module](https://nodejs.org/api/fs.html)
+<!-- /automd -->
 
-* Queues up `open` and `readdir` calls, and retries them once
-  something closes if there is an EMFILE error from too many file
-  descriptors.
-* fixes `lchmod` for Node versions prior to 0.6.2.
-* implements `fs.lutimes` if possible. Otherwise it becomes a noop.
-* ignores `EINVAL` and `EPERM` errors in `chown`, `fchown` or
-  `lchown` if the user isn't root.
-* makes `lchmod` and `lchown` become noops, if not available.
-* retries reading a file if `read` results in EAGAIN error.
+> This is the active development branch. Check out [jiti/v1](https://github.com/unjs/jiti/tree/v1) for legacy v1 docs and code.
 
-On Windows, it retries renaming a file for up to one second if `EACCESS`
-or `EPERM` error occurs, likely because antivirus software has locked
-the directory.
+## 🌟 Used in
 
-## USAGE
+[Docusaurus](https://docusaurus.io/), [ESLint](https://github.com/eslint/eslint), [FormKit](https://formkit.com/), [Histoire](https://histoire.dev/), [Knip](https://knip.dev/), [Nitro](https://nitro.unjs.io/), [Nuxt](https://nuxt.com/), [PostCSS loader](https://github.com/webpack-contrib/postcss-loader), [Rsbuild](https://rsbuild.dev/), [Size Limit](https://github.com/ai/size-limit), [Slidev](https://sli.dev/), [Tailwindcss](https://tailwindcss.com/), [Tokenami](https://github.com/tokenami/tokenami), [UnoCSS](https://unocss.dev/), [WXT](https://wxt.dev/), [Winglang](https://www.winglang.io/), [Graphql code generator](https://the-guild.dev/graphql/codegen), [Lingui](https://lingui.dev/), [Scaffdog](https://scaff.dog/), [Storybook](https://storybook.js.org), [...UnJS ecosystem](https://unjs.io/), [...60M+ npm monthly downloads](https://npm.chart.dev/jiti), [...6M+ public repositories](https://github.com/unjs/jiti/network/dependents).
 
-```javascript
-// use just like fs
-var fs = require('graceful-fs')
+## ✅ Features
 
-// now go and do stuff with it...
-fs.readFile('some-file-or-whatever', (err, data) => {
-  // Do stuff here.
-})
+- Seamless TypeScript and ESM syntax support for Node.js
+- Seamless interoperability between ESM and CommonJS
+- Asynchronous API to replace `import()`
+- Synchronous API to replace `require()` (deprecated)
+- Super slim and zero dependency
+- Custom resolve aliases
+- Smart syntax detection to avoid extra transforms
+- Node.js native `require.cache` integration
+- Filesystem transpile with hard disk caches
+- ESM Loader support
+- JSX support (opt-in)
+
+> [!IMPORTANT]
+> To enhance compatibility, jiti `>=2.1` enabled [`interopDefault`](#interopdefault) using a new Proxy method. If you migrated to `2.0.0` earlier, this might have caused behavior changes. In case of any issues during the upgrade, please [report](https://github.com/unjs/jiti/issues) so we can investigate to solve them. 🙏🏼
+
+## 💡 Usage
+
+### CLI
+
+You can use `jiti` CLI to quickly run any script with TypeScript and native ESM support!
+
+```bash
+npx jiti ./index.ts
 ```
 
-## Sync methods
+### Programmatic
 
-This module cannot intercept or handle `EMFILE` or `ENFILE` errors from sync
-methods.  If you use sync methods which open file descriptors then you are
-responsible for dealing with any errors.
+Initialize a jiti instance:
 
-This is a known limitation, not a bug.
+```js
+// ESM
+import { createJiti } from "jiti";
+const jiti = createJiti(import.meta.url);
 
-## Global Patching
-
-If you want to patch the global fs module (or any other fs-like
-module) you can do this:
-
-```javascript
-// Make sure to read the caveat below.
-var realFs = require('fs')
-var gracefulFs = require('graceful-fs')
-gracefulFs.gracefulify(realFs)
+// CommonJS (deprecated)
+const { createJiti } = require("jiti");
+const jiti = createJiti(__filename);
 ```
 
-This should only ever be done at the top-level application layer, in
-order to delay on EMFILE errors from any fs-using dependencies.  You
-should **not** do this in a library, because it can cause unexpected
-delays in other parts of the program.
+Import (async) and resolve with ESM compatibility:
 
-## Changes
+```js
+// jiti.import(id) is similar to import(id)
+const mod = await jiti.import("./path/to/file.ts");
 
-This module is fairly stable at this point, and used by a lot of
-things.  That being said, because it implements a subtle behavior
-change in a core part of the node API, even modest changes can be
-extremely breaking, and the versioning is thus biased towards
-bumping the major when in doubt.
+// jiti.esmResolve(id) is similar to import.meta.resolve(id)
+const resolvedPath = jiti.esmResolve("./src");
+```
 
-The main change between major versions has been switching between
-providing a fully-patched `fs` module vs monkey-patching the node core
-builtin, and the approach by which a non-monkey-patched `fs` was
-created.
+If you need the default export of module, you can use `jiti.import(id, { default: true })` as shortcut to `mod?.default ?? mod`.
 
-The goal is to trade `EMFILE` errors for slower fs operations.  So, if
-you try to open a zillion files, rather than crashing, `open`
-operations will be queued up and wait for something else to `close`.
+```js
+// shortcut to mod?.default ?? mod
+const modDefault = await jiti.import("./path/to/file.ts", { default: true });
+```
 
-There are advantages to each approach.  Monkey-patching the fs means
-that no `EMFILE` errors can possibly occur anywhere in your
-application, because everything is using the same core `fs` module,
-which is patched.  However, it can also obviously cause undesirable
-side-effects, especially if the module is loaded multiple times.
+CommonJS (sync & deprecated):
 
-Implementing a separate-but-identical patched `fs` module is more
-surgical (and doesn't run the risk of patching multiple times), but
-also imposes the challenge of keeping in sync with the core module.
+```js
+// jiti() is similar to require(id)
+const mod = jiti("./path/to/file.ts");
 
-The current approach loads the `fs` module, and then creates a
-lookalike object that has all the same methods, except a few that are
-patched.  It is safe to use in all versions of Node from 0.8 through
-7.0.
+// jiti.resolve() is similar to require.resolve(id)
+const resolvedPath = jiti.resolve("./src");
+```
 
-### v4
+You can also pass options as the second argument:
 
-* Do not monkey-patch the fs module.  This module may now be used as a
-  drop-in dep, and users can opt into monkey-patching the fs builtin
-  if their app requires it.
+```js
+const jiti = createJiti(import.meta.url, { debug: true });
+```
 
-### v3
+### Register global ESM loader
 
-* Monkey-patch fs, because the eval approach no longer works on recent
-  node.
-* fixed possible type-error throw if rename fails on windows
-* verify that we *never* get EMFILE errors
-* Ignore ENOSYS from chmod/chown
-* clarify that graceful-fs must be used as a drop-in
+You can globally register jiti using [global hooks](https://nodejs.org/api/module.html#initialize). (Important: Requires Node.js > 20)
 
-### v2.1.0
+```js
+import "jiti/register";
+```
 
-* Use eval rather than monkey-patching fs.
-* readdir: Always sort the results
-* win32: requeue a file if error has an OK status
+Or:
 
-### v2.0
+```bash
+node --import jiti/register index.ts
+```
 
-* A return to monkey patching
-* wrap process.cwd
+## 🎈 `jiti/native`
 
-### v1.1
+You can alias `jiti` to `jiti/native` to directly depend on runtime's [`import.meta.resolve`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import.meta/resolve) and dynamic [`import()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import) support. This allows easing up the ecosystem transition to runtime native support by giving the same API of jiti.
 
-* wrap readFile
-* Wrap fs.writeFile.
-* readdir protection
-* Don't clobber the fs builtin
-* Handle fs.read EAGAIN errors by trying again
-* Expose the curOpen counter
-* No-op lchown/lchmod if not implemented
-* fs.rename patch only for win32
-* Patch fs.rename to handle AV software on Windows
-* Close #4 Chown should not fail on einval or eperm if non-root
-* Fix isaacs/fstream#1 Only wrap fs one time
-* Fix #3 Start at 1024 max files, then back off on EMFILE
-* lutimes that doens't blow up on Linux
-* A full on-rewrite using a queue instead of just swallowing the EMFILE error
-* Wrap Read/Write streams as well
+## ⚙️ Options
 
-### 1.0
+### `debug`
 
-* Update engines for node 0.6
-* Be lstat-graceful on Windows
-* first
+- Type: Boolean
+- Default: `false`
+- Environment variable: `JITI_DEBUG`
+
+Enable verbose logging. You can use `JITI_DEBUG=1 <your command>` to enable it.
+
+### `fsCache`
+
+- Type: Boolean | String
+- Default: `true`
+- Environment variable: `JITI_FS_CACHE`
+
+Filesystem source cache (enabled by default)
+
+By default (when is `true`), jiti uses `node_modules/.cache/jiti` (if exists) or `{TMP_DIR}/jiti`.
+
+**Note:** It is recommended that this option be enabled for better performance.
+
+### `rebuildFsCache`
+
+- Type: Boolean
+- Default: `false`
+- Environment variable: `JITI_REBUILD_FS_CACHE`
+
+Rebuild filesystem source cache created by `fsCache`.
+
+### `moduleCache`
+
+- Type: String
+- Default: `true`
+- Environment variable: `JITI_MODULE_CACHE`
+
+Runtime module cache (enabled by default).
+
+Disabling allows editing code and importing the same module multiple times.
+
+When enabled, jiti integrates with Node.js native CommonJS cache-store.
+
+### `transform`
+
+- Type: Function
+- Default: Babel (lazy loaded)
+
+Transform function. See [src/babel](./src/babel.ts) for more details
+
+### `sourceMaps`
+
+- Type: Boolean
+- Default `false`
+- Environment variable: `JITI_SOURCE_MAPS`
+
+Add inline source map to transformed source for better debugging.
+
+### `interopDefault`
+
+- Type: Boolean
+- Default: `true`
+- Environment variable: `JITI_INTEROP_DEFAULT`
+
+Jiti combines module exports with the `default` export using an internal Proxy to improve compatibility with mixed CJS/ESM usage. You can check the current implementation [here](https://github.com/unjs/jiti/blob/main/src/utils.ts#L105).
+
+> [!WARNING]
+> This option wraps **all imported modules** in a Proxy, which adds ~25-50ns overhead per property access. For performance-critical hot paths where you access module exports very frequently, consider setting `interopDefault: false` or `JITI_INTEROP_DEFAULT=false`.
+
+### `alias`
+
+- Type: Object
+- Default: -
+- Environment variable: `JITI_ALIAS`
+
+You can also pass an object to the environment variable for inline config. Example: `JITI_ALIAS='{"~/*": "./src/*"}' jiti ...`.
+
+Custom alias map used to resolve IDs.
+
+### `tsconfigPaths`
+
+- Type: Boolean | String
+- Default: `false`
+- Environment variable: `JITI_TSCONFIG_PATHS`
+
+Enable TypeScript [`paths`](https://www.typescriptlang.org/tsconfig/#paths) resolution using [`get-tsconfig`](https://github.com/privatenumber/get-tsconfig).
+
+- `true`: Auto-discover `tsconfig.json` by walking up from the jiti instance's parent path.
+- `string`: Explicit path to a `tsconfig.json` file.
+- `false` (default): Disabled.
+
+### `nativeModules`
+
+- Type: Array
+- Default: ['typescript']
+- Environment variable: `JITI_NATIVE_MODULES`
+
+List of modules (within `node_modules`) to always use native `require()` for them.
+
+### `transformModules`
+
+- Type: Array
+- Default: []
+- Environment variable: `JITI_TRANSFORM_MODULES`
+
+List of modules (within `node_modules`) to transform them regardless of syntax.
+
+### `importMeta`
+
+Parent module's [`import.meta`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import.meta) context to use for ESM resolution. (only used for `jiti/native` import).
+
+### `tryNative`
+
+- Type: Boolean
+- Default: Enabled if bun is detected
+- Environment variable: `JITI_TRY_NATIVE`
+
+Try to use native require and import without jiti transformations first.
+
+### `jsx`
+
+- Type: Boolean | {options}
+- Default: `false`
+- Environment Variable: `JITI_JSX`
+
+Enable JSX support using [`@babel/plugin-transform-react-jsx`](https://babeljs.io/docs/babel-plugin-transform-react-jsx).
+
+See [`test/fixtures/jsx`](./test/fixtures/jsx) for framework integration examples.
+
+## Development
+
+- Clone this repository
+- Enable [Corepack](https://github.com/nodejs/corepack) using `corepack enable`
+- Install dependencies using `pnpm install`
+- Run `pnpm dev`
+- Run `pnpm jiti ./test/path/to/file.ts`
+
+## License
+
+<!-- automd:contributors license=MIT author="pi0" -->
+
+Published under the [MIT](https://github.com/unjs/jiti/blob/main/LICENSE) license.
+Made by [@pi0](https://github.com/pi0) and [community](https://github.com/unjs/jiti/graphs/contributors) 💛
+<br><br>
+<a href="https://github.com/unjs/jiti/graphs/contributors">
+<img src="https://contrib.rocks/image?repo=unjs/jiti" />
+</a>
+
+<!-- /automd -->
+
+<!-- automd:with-automd -->
