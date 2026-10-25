@@ -1,16 +1,41 @@
-# React + Vite
+# Update Browserslist DB
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+<img width="120" height="120" alt="Browserslist logo by Anton Popov"
+     src="https://browsersl.ist/logo.svg" align="right">
 
-Currently, two official plugins are available:
+CLI tool to update `caniuse-lite` with browsers DB
+from [Browserslist](https://github.com/browserslist/browserslist/) config.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Some queries like `last 2 versions` or `>1%` depend on actual data
+from `caniuse-lite`.
 
-## React Compiler
+```sh
+npx update-browserslist-db@latest
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Or if using `pnpm`:
 
-## Expanding the Oxlint configuration
+```sh
+pnpm dlx update-browserslist-db latest
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Or if using `bun`:
+
+```sh
+bunx update-browserslist-db@latest
+```
+
+Or if using `yarn` 2+:
+
+```sh
+yarn dlx update-browserslist-db@latest
+```
+
+---
+
+<img src="https://cdn.evilmartians.com/badges/logo-no-label.svg" alt="" width="22" height="16" />  Update Browserslist DB is built by <b><a href="https://evilmartians.com/">Evil Martians</a></b>, an American design and engineering consultancy for <b>developer tools, AI, and cybersecurity startups</b>.
+
+---
+
+## Docs
+Read full docs **[here](https://github.com/browserslist/update-db#readme)**.
