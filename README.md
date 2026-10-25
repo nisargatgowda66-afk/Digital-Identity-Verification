@@ -1,41 +1,20 @@
-# Update Browserslist DB
+# Vite ⚡
 
-<img width="120" height="120" alt="Browserslist logo by Anton Popov"
-     src="https://browsersl.ist/logo.svg" align="right">
+> Next Generation Frontend Tooling
 
-CLI tool to update `caniuse-lite` with browsers DB
-from [Browserslist](https://github.com/browserslist/browserslist/) config.
+- 💡 Instant Server Start
+- ⚡️ Lightning Fast HMR
+- 🛠️ Rich Features
+- 📦 Optimized Build
+- 🔩 Universal Plugin Interface
+- 🔑 Fully Typed APIs
 
-Some queries like `last 2 versions` or `>1%` depend on actual data
-from `caniuse-lite`.
+Vite (French word for "quick", pronounced [`/viːt/`](https://cdn.jsdelivr.net/gh/vitejs/vite@main/docs/public/vite.mp3), like "veet") is a build tool that aims to provide a faster and leaner development experience for modern web projects. It consists of two major parts:
 
-```sh
-npx update-browserslist-db@latest
-```
+- A dev server that provides [rich feature enhancements](https://vite.dev/guide/features) over [native ES modules](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules), for example extremely fast [Hot Module Replacement (HMR)](https://vite.dev/guide/features#hot-module-replacement).
 
-Or if using `pnpm`:
+- A build command that bundles your code with [Rolldown](https://rolldown.rs), pre-configured to output highly optimized static assets for production.
 
-```sh
-pnpm dlx update-browserslist-db latest
-```
+In addition, Vite is highly extensible via its [Plugin API](https://vite.dev/guide/api-plugin.html) and [JavaScript API](https://vite.dev/guide/api-javascript.html) with full typing support.
 
-Or if using `bun`:
-
-```sh
-bunx update-browserslist-db@latest
-```
-
-Or if using `yarn` 2+:
-
-```sh
-yarn dlx update-browserslist-db@latest
-```
-
----
-
-<img src="https://cdn.evilmartians.com/badges/logo-no-label.svg" alt="" width="22" height="16" />  Update Browserslist DB is built by <b><a href="https://evilmartians.com/">Evil Martians</a></b>, an American design and engineering consultancy for <b>developer tools, AI, and cybersecurity startups</b>.
-
----
-
-## Docs
-Read full docs **[here](https://github.com/browserslist/update-db#readme)**.
+[Read the Docs to Learn More](https://vite.dev).
