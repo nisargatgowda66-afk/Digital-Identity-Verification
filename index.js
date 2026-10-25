@@ -1,17 +1,22 @@
-'use strict';
+const { dirname, resolve } = require('path');
+const { readdir, stat } = require('fs');
+const { promisify } = require('util');
 
-const pico = require('./lib/picomatch');
-const utils = require('./lib/utils');
+const toStats = promisify(stat);
+const toRead = promisify(readdir);
 
-function picomatch(glob, options, returnState = false) {
-  // default to os.platform()
-  if (options && (options.windows === null || options.windows === undefined)) {
-    // don't mutate the original options object
-    options = { ...options, windows: utils.isWindows() };
-  }
+module.exports = async function (start, callback) {
+	let dir = resolve('.', start);
+	let tmp, stats = await toStats(dir);
 
-  return pico(glob, options, returnState);
+	if (!stats.isDirectory()) {
+		dir = dirname(dir);
+	}
+
+	while (true) {
+		tmp = await callback(dir, await toRead(dir));
+		if (tmp) return resolve(dir, tmp);
+		dir = dirname(tmp = dir);
+		if (tmp === dir) break;
+	}
 }
-
-Object.assign(picomatch, pico);
-module.exports = picomatch;
