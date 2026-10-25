@@ -1,25 +1,32 @@
-const { EOL } = require('os')
-
-function getFirstRegexpMatchOrDefault(text, regexp, defaultValue) {
-  regexp.lastIndex = 0 // https://stackoverflow.com/a/11477448/4536543
-  let match = regexp.exec(text)
-  if (match !== null) {
-    return match[1]
-  } else {
-    return defaultValue
-  }
+//#region src-js/utils/utils.ts
+/**
+* Get error message from an error.
+*
+* `err` is expected to be an `Error` object, but can be anything.
+*
+* * If it's an `Error`, the error message and stack trace is returned.
+* * If it's another object with a string `message` property, `message` is returned.
+* * Otherwise, a generic "Unknown error" message is returned.
+*
+* This function will never throw, and always returns a non-empty string, even if:
+*
+* * `err` is `null` or `undefined`.
+* * `err` is an object with a getter for `message` property which throws.
+* * `err` has a getter for `stack` or `message` property which returns a different value each time it's accessed.
+*
+* @param err - Error
+* @returns Error message
+*/
+function getErrorMessage(err) {
+	try {
+		if (err instanceof Error) {
+			let { stack } = err;
+			if (typeof stack == "string" && stack !== "") return stack;
+		}
+		let { message } = err;
+		if (typeof message == "string" && message !== "") return message;
+	} catch {}
+	return "Unknown error";
 }
-
-const DEFAULT_INDENT = '  '
-const INDENT_REGEXP = /^([ \t]+)[^\s]/m
-
-module.exports.detectIndent = text =>
-  getFirstRegexpMatchOrDefault(text, INDENT_REGEXP, DEFAULT_INDENT)
-module.exports.DEFAULT_INDENT = DEFAULT_INDENT
-
-const DEFAULT_EOL = EOL
-const EOL_REGEXP = /(\r\n|\n|\r)/g
-
-module.exports.detectEOL = text =>
-  getFirstRegexpMatchOrDefault(text, EOL_REGEXP, DEFAULT_EOL)
-module.exports.DEFAULT_EOL = DEFAULT_EOL
+//#endregion
+export { getErrorMessage as t };

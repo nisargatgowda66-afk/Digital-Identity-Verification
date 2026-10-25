@@ -1,4 +1,12 @@
-let urlAlphabet =
-  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
-
-export { urlAlphabet }
+//#region src-js/package/config.ts
+/**
+* Define an Oxlint configuration with type inference.
+*
+* @param config - Oxlint configuration
+* @returns Config unchanged
+*/
+function defineConfig(config) {
+	return config;
+}
+//#endregion
+export { defineConfig };
