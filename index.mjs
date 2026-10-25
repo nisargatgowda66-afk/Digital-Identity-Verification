@@ -1,20 +1,16 @@
 import { dirname, resolve } from 'path';
-import { readdir, stat } from 'fs';
-import { promisify } from 'util';
+import { readdirSync, statSync } from 'fs';
 
-const toStats = promisify(stat);
-const toRead = promisify(readdir);
-
-export default async function (start, callback) {
+export default function (start, callback) {
 	let dir = resolve('.', start);
-	let tmp, stats = await toStats(dir);
+	let tmp, stats = statSync(dir);
 
 	if (!stats.isDirectory()) {
 		dir = dirname(dir);
 	}
 
 	while (true) {
-		tmp = await callback(dir, await toRead(dir));
+		tmp = callback(dir, readdirSync(dir));
 		if (tmp) return resolve(dir, tmp);
 		dir = dirname(tmp = dir);
 		if (tmp === dir) break;

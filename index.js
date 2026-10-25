@@ -1,20 +1,16 @@
 const { dirname, resolve } = require('path');
-const { readdir, stat } = require('fs');
-const { promisify } = require('util');
+const { readdirSync, statSync } = require('fs');
 
-const toStats = promisify(stat);
-const toRead = promisify(readdir);
-
-module.exports = async function (start, callback) {
+module.exports = function (start, callback) {
 	let dir = resolve('.', start);
-	let tmp, stats = await toStats(dir);
+	let tmp, stats = statSync(dir);
 
 	if (!stats.isDirectory()) {
 		dir = dirname(dir);
 	}
 
 	while (true) {
-		tmp = await callback(dir, await toRead(dir));
+		tmp = callback(dir, readdirSync(dir));
 		if (tmp) return resolve(dir, tmp);
 		dir = dirname(tmp = dir);
 		if (tmp === dir) break;

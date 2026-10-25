@@ -1,15 +1,13 @@
-type Promisable<T> = T | Promise<T>;
-
 declare namespace escalade {
 	export type Callback = (
 		directory: string,
 		files: string[],
-	) => Promisable<string | false | void>;
+	) => string | false | void;
 }
 
 declare function escalade(
 	directory: string,
 	callback: escalade.Callback,
-): Promise<string | void>;
+): string | void;
 
 export = escalade;
