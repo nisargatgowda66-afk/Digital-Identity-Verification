@@ -1,0 +1,8 @@
+DIGITAL IDENTITY VERIFICATION
+Identity ID: STU-2026-001
+Name: Ravi Kumar
+Document Type: Student Identity Card
+Institution: Sample College
+Purpose: Blockchain Verification Demo
+
+This is a fictional sample document created for testing document registration and verification.
