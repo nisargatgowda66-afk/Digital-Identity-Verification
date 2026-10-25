@@ -1,47 +1,24 @@
-let crypto = require('crypto')
-
-let { urlAlphabet } = require('../url-alphabet/index.cjs')
-
-let random = bytes =>
-  new Promise((resolve, reject) => {
-    crypto.randomFill(Buffer.allocUnsafe(bytes), (err, buf) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(buf)
-      }
-    })
-  })
+let urlAlphabet =
+  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
 
 let customAlphabet = (alphabet, defaultSize = 21) => {
-  let mask = (2 << (31 - Math.clz32((alphabet.length - 1) | 1))) - 1
-
-
-  let step = Math.ceil((1.6 * mask * defaultSize) / alphabet.length)
-
-  let tick = (id, size = defaultSize) =>
-    random(step).then(bytes => {
-      let i = step
-      while (i--) {
-        id += alphabet[bytes[i] & mask] || ''
-        if (id.length >= size) return id
-      }
-      return tick(id, size)
-    })
-
   return (size = defaultSize) => {
-    if (size <= 0) return Promise.resolve('')
-    return tick('', size)
+    let id = ''
+    let i = size | 0
+    while (i-- > 0) {
+      id += alphabet[(Math.random() * alphabet.length) | 0]
+    }
+    return id
   }
 }
 
-let nanoid = (size = 21) =>
-  random((size |= 0)).then(bytes => {
-    let id = ''
-    while (size--) {
-      id += urlAlphabet[bytes[size] & 63]
-    }
-    return id
-  })
+let nanoid = (size = 21) => {
+  let id = ''
+  let i = size | 0
+  while (i-- > 0) {
+    id += urlAlphabet[(Math.random() * 64) | 0]
+  }
+  return id
+}
 
-module.exports = { nanoid, customAlphabet, random }
+module.exports = { nanoid, customAlphabet }
