@@ -1,39 +1,32 @@
-# Nano ID
+# Node.js releases data
 
-<img src="https://ai.github.io/nanoid/logo.svg" align="right"
-     alt="Nano ID logo by Anton Lovchikov" width="180" height="94">
+[![npm version](https://img.shields.io/npm/v/node-releases.svg)](https://www.npmjs.com/package/node-releases)
+[![License: MIT](https://img.shields.io/npm/l/node-releases.svg)](./LICENSE)
 
-**English** | [Русский](./README.ru.md) | [简体中文](./README.zh-CN.md) | [Bahasa Indonesia](./README.id-ID.md)
+All data is located in `data` directory.
 
-A tiny, secure, URL-friendly, unique string ID generator for JavaScript.
+`data/processed` contains `envs.json` with node.js releases data preprocessed to be used by [Browserslist](https://github.com/ai/browserslist) and other projects. Each version in this file contains only necessary info: version, release date, LTS flag/name, and security flag.
 
-> “An amazing level of senseless perfectionism,
-> which is simply impossible not to respect.”
+`data/release-schedule` contains `release-schedule.json` with node.js releases date and end of life date.
 
-* **Small.** 130 bytes (minified and gzipped). No dependencies.
-  [Size Limit] controls the size.
-* **Fast.** It is 2 times faster than UUID.
-* **Safe.** It uses hardware random generator. Can be used in clusters.
-* **Short IDs.** It uses a larger alphabet than UUID (`A-Za-z0-9_-`).
-  So ID size was reduced from 36 to 21 symbols.
-* **Portable.** Nano ID was ported
-  to [20 programming languages](#other-programming-languages).
+## Installation
 
-```js
-import { nanoid } from 'nanoid'
-model.id = nanoid() //=> "V1StGXR8_Z5jdHi6B-myT"
+```bash
+npm install node-releases
 ```
 
-Supports modern browsers, IE [with Babel], Node.js and React Native.
+## Usage
 
-[online tool]: https://gitpod.io/#https://github.com/ai/nanoid/
-[with Babel]:  https://developer.epages.com/blog/coding/how-to-transpile-node-modules-with-babel-and-webpack-in-a-monorepo/
-[Size Limit]:  https://github.com/ai/size-limit
+```js
+// CommonJS
+const envs = require('node-releases/data/processed/envs.json');
+const schedule = require('node-releases/data/release-schedule/release-schedule.json');
 
-<a href="https://evilmartians.com/?utm_source=nanoid">
-  <img src="https://evilmartians.com/badges/sponsored-by-evil-martians.svg"
-       alt="Sponsored by Evil Martians" width="236" height="54">
-</a>
+// ESM (Node.js 22+)
+import envs from 'node-releases/data/processed/envs.json' with { type: 'json' };
+import schedule from 'node-releases/data/release-schedule/release-schedule.json' with { type: 'json' };
+```
 
-## Docs
-Read full docs **[here](https://github.com/ai/nanoid#readme)**.
+## Releases
+
+Releases are published automatically by a nightly GitHub Actions workflow whenever upstream Node.js release data changes. Publishing uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers) (OIDC, no long-lived tokens) and ships [provenance attestations](https://docs.npmjs.com/generating-provenance-statements).
