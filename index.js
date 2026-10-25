@@ -1,63 +1,47 @@
 import crypto from 'crypto'
 
-import { urlAlphabet } from './url-alphabet/index.js'
+import { urlAlphabet } from '../url-alphabet/index.js'
 
-const POOL_SIZE_MULTIPLIER = 128
-let pool, poolOffset
+let random = bytes =>
+  new Promise((resolve, reject) => {
+    crypto.randomFill(Buffer.allocUnsafe(bytes), (err, buf) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(buf)
+      }
+    })
+  })
 
-let fillPool = bytes => {
-  if (bytes < 0 || bytes > 1024) throw new RangeError('Wrong ID size')
-  try {
-    if (!pool || pool.length < bytes) {
-      pool = Buffer.allocUnsafe(bytes * POOL_SIZE_MULTIPLIER)
-      crypto.randomFillSync(pool)
-      poolOffset = 0
-    } else if (poolOffset + bytes > pool.length) {
-      crypto.randomFillSync(pool)
-      poolOffset = 0
-    }
-  } catch (e) {
-    pool = undefined
-    throw e
-  }
-  poolOffset += bytes
-}
-
-let random = bytes => {
-  fillPool((bytes |= 0))
-  return pool.subarray(poolOffset - bytes, poolOffset)
-}
-
-let customRandom = (alphabet, defaultSize, getRandom) => {
+let customAlphabet = (alphabet, defaultSize = 21) => {
   let mask = (2 << (31 - Math.clz32((alphabet.length - 1) | 1))) - 1
 
 
   let step = Math.ceil((1.6 * mask * defaultSize) / alphabet.length)
 
-  return (size = defaultSize) => {
-    if (size <= 0) return ''
-    let id = ''
-    while (true) {
-      let bytes = getRandom(step)
+  let tick = (id, size = defaultSize) =>
+    random(step).then(bytes => {
       let i = step
       while (i--) {
         id += alphabet[bytes[i] & mask] || ''
-        if (id.length === size) return id
+        if (id.length >= size) return id
       }
+      return tick(id, size)
+    })
+
+  return (size = defaultSize) => {
+    if (size <= 0) return Promise.resolve('')
+    return tick('', size)
+  }
+}
+
+let nanoid = (size = 21) =>
+  random((size |= 0)).then(bytes => {
+    let id = ''
+    while (size--) {
+      id += urlAlphabet[bytes[size] & 63]
     }
-  }
-}
+    return id
+  })
 
-let customAlphabet = (alphabet, size = 21) =>
-  customRandom(alphabet, size, random)
-
-let nanoid = (size = 21) => {
-  fillPool((size |= 0))
-  let id = ''
-  for (let i = poolOffset - size; i < poolOffset; i++) {
-    id += urlAlphabet[pool[i] & 63]
-  }
-  return id
-}
-
-export { nanoid, customAlphabet, customRandom, urlAlphabet, random }
+export { nanoid, customAlphabet, random }
