@@ -1,67 +1,89 @@
 {
-  "name": "magic-string",
-  "version": "0.30.21",
-  "type": "commonjs",
-  "description": "Modify strings, generate sourcemaps",
+  "name": "nanoid",
+  "version": "3.3.20",
+  "description": "A tiny (116 bytes), secure URL-friendly unique string ID generator",
   "keywords": [
-    "string",
-    "string manipulation",
-    "sourcemap",
-    "templating",
-    "transpilation"
+    "uuid",
+    "random",
+    "id",
+    "url"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Rich-Harris/magic-string.git"
+  "engines": {
+    "node": "^10 || ^12 || ^13.7 || ^14 || >=15.0.1"
   },
-  "license": "MIT",
-  "author": "Rich Harris",
-  "main": "./dist/magic-string.cjs.js",
-  "module": "./dist/magic-string.es.mjs",
-  "sideEffects": false,
-  "jsnext:main": "./dist/magic-string.es.mjs",
-  "types": "./dist/magic-string.cjs.d.ts",
-  "exports": {
-    "./package.json": "./package.json",
-    ".": {
-      "import": "./dist/magic-string.es.mjs",
-      "require": "./dist/magic-string.cjs.js"
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/ai"
     }
-  },
-  "files": [
-    "dist/*",
-    "index.d.ts",
-    "README.md"
   ],
-  "devDependencies": {
-    "@eslint/js": "^9.38.0",
-    "@rollup/plugin-node-resolve": "^16.0.3",
-    "@rollup/plugin-replace": "^6.0.2",
-    "benchmark": "^2.1.4",
-    "bumpp": "^10.3.1",
-    "conventional-changelog-cli": "^5.0.0",
-    "eslint": "^9.38.0",
-    "prettier": "^3.6.2",
-    "publint": "^0.3.15",
-    "rollup": "^4.52.5",
-    "source-map-js": "^1.2.1",
-    "source-map-support": "^0.5.21",
-    "vitest": "^4.0.2"
+  "author": "Andrey Sitnik <andrey@sitnik.ru>",
+  "license": "MIT",
+  "repository": "ai/nanoid",
+  "browser": {
+    "./index.js": "./index.browser.js",
+    "./async/index.js": "./async/index.browser.js",
+    "./async/index.cjs": "./async/index.browser.cjs",
+    "./index.cjs": "./index.browser.cjs"
   },
-  "dependencies": {
-    "@jridgewell/sourcemap-codec": "^1.5.5"
-  },
-  "scripts": {
-    "build": "rollup -c",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
-    "format": "prettier --single-quote --print-width 100 --use-tabs --write .",
-    "lint": "eslint src test && publint",
-    "lint:fix": "eslint src test --fix",
-    "release": "bumpp -x \"pnpm run changelog\" --all",
-    "pretest": "pnpm run build",
-    "test": "vitest run",
-    "test:dev": "vitest",
-    "bench": "pnpm run build && node benchmark/index.mjs",
-    "watch": "rollup -cw"
+  "react-native": "index.js",
+  "bin": "./bin/nanoid.cjs",
+  "sideEffects": false,
+  "types": "./index.d.ts",
+  "type": "module",
+  "main": "index.cjs",
+  "module": "index.js",
+  "exports": {
+    ".": {
+      "react-native": "./index.browser.js",
+      "browser": "./index.browser.js",
+      "require": {
+        "types": "./index.d.cts",
+        "default": "./index.cjs"
+      },
+      "import": {
+        "types": "./index.d.ts",
+        "default": "./index.js"
+      },
+      "default": "./index.js"
+    },
+    "./package.json": "./package.json",
+    "./async/package.json": "./async/package.json",
+    "./async": {
+      "browser": "./async/index.browser.js",
+      "require": {
+        "types": "./async/index.d.cts",
+        "default": "./async/index.cjs"
+      },
+      "import": {
+        "types": "./async/index.d.ts",
+        "default": "./async/index.js"
+      },
+      "default": "./async/index.js"
+    },
+    "./non-secure/package.json": "./non-secure/package.json",
+    "./non-secure": {
+      "require": {
+        "types": "./index.d.cts",
+        "default": "./non-secure/index.cjs"
+      },
+      "import": {
+        "types": "./index.d.ts",
+        "default": "./non-secure/index.js"
+      },
+      "default": "./non-secure/index.js"
+    },
+    "./url-alphabet/package.json": "./url-alphabet/package.json",
+    "./url-alphabet": {
+      "require": {
+        "types": "./index.d.cts",
+        "default": "./url-alphabet/index.cjs"
+      },
+      "import": {
+        "types": "./index.d.ts",
+        "default": "./url-alphabet/index.js"
+      },
+      "default": "./url-alphabet/index.js"
+    }
   }
 }
