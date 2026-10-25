@@ -1,32 +1,58 @@
-# Node.js releases data
+<p align="center">
+  <br>
+  <br>
+  <a href="https://oxc.rs" target="_blank" rel="noopener noreferrer">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://oxc.rs/oxc-light.svg">
+      <source media="(prefers-color-scheme: light)" srcset="https://oxc.rs/oxc-dark.svg">
+      <img alt="Oxc logo" src="https://oxc.rs/oxc-dark.svg" height="60">
+    </picture>
+  </a>
+  <br>
+  <br>
+  <br>
+</p>
 
-[![npm version](https://img.shields.io/npm/v/node-releases.svg)](https://www.npmjs.com/package/node-releases)
-[![License: MIT](https://img.shields.io/npm/l/node-releases.svg)](./LICENSE)
+<div align="center">
 
-All data is located in `data` directory.
+[![MIT licensed][license-badge]][license-url]
+[![Build Status][ci-badge]][ci-url]
+[![Code Coverage][code-coverage-badge]][code-coverage-url]
 
-`data/processed` contains `envs.json` with node.js releases data preprocessed to be used by [Browserslist](https://github.com/ai/browserslist) and other projects. Each version in this file contains only necessary info: version, release date, LTS flag/name, and security flag.
+[![Discord chat][discord-badge]][discord-url]
+[![Playground][playground-badge]][playground-url]
 
-`data/release-schedule` contains `release-schedule.json` with node.js releases date and end of life date.
+[discord-badge]: https://img.shields.io/discord/1079625926024900739?logo=discord&label=Discord
+[discord-url]: https://discord.gg/9uXCAwqQZW
+[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
+[license-url]: https://github.com/oxc-project/oxc/blob/main/LICENSE
+[ci-badge]: https://github.com/oxc-project/oxc/actions/workflows/ci.yml/badge.svg?event=push&branch=main
+[ci-url]: https://github.com/oxc-project/oxc/actions/workflows/ci.yml?query=event%3Apush+branch%3Amain
+[npm-badge]: https://img.shields.io/npm/v/oxlint/latest?color=brightgreen
+[npm-url]: https://npmx.dev/package/oxlint/v/latest
+[code-size-badge]: https://img.shields.io/github/languages/code-size/oxc-project/oxc
+[code-size-url]: https://github.com/oxc-project/oxc
+[code-coverage-badge]: https://codecov.io/github/oxc-project/oxc/branch/main/graph/badge.svg
+[code-coverage-url]: https://codecov.io/gh/oxc-project/oxc
+[playground-badge]: https://img.shields.io/badge/Playground-blue?color=9BE4E0
+[playground-url]: https://playground.oxc.rs/
 
-## Installation
+</div>
 
-```bash
-npm install node-releases
-```
+# ⚓ Oxc
 
-## Usage
+The Oxidation Compiler is creating a suite of high-performance tools for JavaScript and TypeScript.
 
-```js
-// CommonJS
-const envs = require('node-releases/data/processed/envs.json');
-const schedule = require('node-releases/data/release-schedule/release-schedule.json');
+## Oxlint
 
-// ESM (Node.js 22+)
-import envs from 'node-releases/data/processed/envs.json' with { type: 'json' };
-import schedule from 'node-releases/data/release-schedule/release-schedule.json' with { type: 'json' };
-```
+This is the linter for oxc.
 
-## Releases
+See [usage instructions](https://oxc.rs/docs/guide/usage/linter).
 
-Releases are published automatically by a nightly GitHub Actions workflow whenever upstream Node.js release data changes. Publishing uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers) (OIDC, no long-lived tokens) and ships [provenance attestations](https://docs.npmjs.com/generating-provenance-statements).
+Run
+
+- `npx --yes oxlint@latest` in your JavaScript / TypeScript codebase and see it complete in milliseconds. No configurations are required.
+- `npx oxlint@latest --help` for quick usage instructions.
+- `npx oxlint@latest --rules` for the list of rules.
+- `npx skills add https://github.com/oxc-project/oxc --skill migrate-oxlint` to install the [`migrate-oxlint`](https://skills.sh/oxc-project/oxc/migrate-oxlint) skill, then run `/migrate-oxlint` to migrate from ESLint.
+- See also [migrate from ESLint](https://oxc.rs/docs/guide/usage/linter/migrate-from-eslint.html).
