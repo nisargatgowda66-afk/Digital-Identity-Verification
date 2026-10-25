@@ -1,81 +1,53 @@
 {
-  "name": "fraction.js",
-  "title": "Fraction.js",
-  "version": "5.3.4",
-  "description": "The RAW rational numbers library",
-  "homepage": "https://raw.org/article/rational-numbers-in-javascript/",
-  "bugs": "https://github.com/rawify/Fraction.js/issues",
-  "keywords": [
-    "math",
-    "numbers",
-    "parser",
-    "ratio",
-    "fraction",
-    "fractions",
-    "rational",
-    "rationals",
-    "rational numbers",
-    "bigint",
-    "arbitrary precision",
-    "mixed numbers",
-    "decimal",
-    "numerator",
-    "denominator",
-    "simplification"
-  ],
-  "private": false,
-  "main": "./dist/fraction.js",
-  "module": "./dist/fraction.mjs",
-  "browser": "./dist/fraction.min.js",
-  "unpkg": "./dist/fraction.min.js",
-  "types": "./fraction.d.mts",
-  "exports": {
-    ".": {
-      "types": {
-        "import": "./fraction.d.mts",
-        "require": "./fraction.d.ts"
-      },
-      "import": "./dist/fraction.mjs",
-      "require": "./dist/fraction.js",
-      "browser": "./dist/fraction.min.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "typesVersions": {
-    "<4.7": {
-      "*": [
-        "fraction.d.ts"
-      ]
-    }
-  },
-  "sideEffects": false,
+  "name": "graceful-fs",
+  "description": "A drop-in replacement for fs, making various improvements.",
+  "version": "4.2.11",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/rawify/Fraction.js.git"
+    "url": "https://github.com/isaacs/node-graceful-fs"
   },
-  "funding": {
-    "type": "github",
-    "url": "https://github.com/sponsors/rawify"
-  },
-  "author": {
-    "name": "Robert Eisele",
-    "email": "robert@raw.org",
-    "url": "https://raw.org/"
-  },
-  "license": "MIT",
-  "engines": {
-    "node": "*"
-  },
+  "main": "graceful-fs.js",
   "directories": {
-    "example": "examples",
-    "test": "tests"
+    "test": "test"
   },
   "scripts": {
-    "build": "crude-build Fraction",
-    "test": "mocha tests/*.js"
+    "preversion": "npm test",
+    "postversion": "npm publish",
+    "postpublish": "git push origin --follow-tags",
+    "test": "nyc --silent node test.js | tap -c -",
+    "posttest": "nyc report"
   },
+  "keywords": [
+    "fs",
+    "module",
+    "reading",
+    "retry",
+    "retries",
+    "queue",
+    "error",
+    "errors",
+    "handling",
+    "EMFILE",
+    "EAGAIN",
+    "EINVAL",
+    "EPERM",
+    "EACCESS"
+  ],
+  "license": "ISC",
   "devDependencies": {
-    "crude-build": "^0.1.2",
-    "mocha": "*"
+    "import-fresh": "^2.0.0",
+    "mkdirp": "^0.5.0",
+    "rimraf": "^2.2.8",
+    "tap": "^16.3.4"
+  },
+  "files": [
+    "fs.js",
+    "graceful-fs.js",
+    "legacy-streams.js",
+    "polyfills.js",
+    "clone.js"
+  ],
+  "tap": {
+    "reporter": "classic"
   }
 }
