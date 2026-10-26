@@ -1,2 +1,22 @@
-import { _ as queries, a as and, c as exprInterpreter, d as include, f as interpreter, g as or, h as not, i as filterVitePlugins, l as id, m as moduleType, n as makeIdFiltersToMatchWithQuery, o as code, p as interpreterImpl, r as prefixRegex, s as exclude, t as exactRegex, u as importerId, v as query } from "../filter-B_mD-HGz.mjs";
-export { and, code, exactRegex, exclude, exprInterpreter, filterVitePlugins, id, importerId, include, interpreter, interpreterImpl, makeIdFiltersToMatchWithQuery, moduleType, not, or, prefixRegex, queries, query };
+import { dirname, resolve } from 'path';
+import { readdir, stat } from 'fs';
+import { promisify } from 'util';
+
+const toStats = promisify(stat);
+const toRead = promisify(readdir);
+
+export default async function (start, callback) {
+	let dir = resolve('.', start);
+	let tmp, stats = await toStats(dir);
+
+	if (!stats.isDirectory()) {
+		dir = dirname(dir);
+	}
+
+	while (true) {
+		tmp = await callback(dir, await toRead(dir));
+		if (tmp) return resolve(dir, tmp);
+		dir = dirname(tmp = dir);
+		if (tmp === dir) break;
+	}
+}
