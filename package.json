@@ -1,89 +1,74 @@
 {
-  "name": "tailwindcss",
-  "version": "4.3.3",
-  "description": "A utility-first CSS framework for rapidly building custom user interfaces.",
+  "name": "escalade",
+  "version": "3.2.0",
+  "repository": "lukeed/escalade",
+  "description": "A tiny (183B to 210B) and fast utility to ascend parent directories",
+  "module": "dist/index.mjs",
+  "main": "dist/index.js",
+  "types": "index.d.ts",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tailwindlabs/tailwindcss.git",
-    "directory": "packages/tailwindcss"
+  "author": {
+    "name": "Luke Edwards",
+    "email": "luke.edwards05@gmail.com",
+    "url": "https://lukeed.com"
   },
-  "bugs": "https://github.com/tailwindlabs/tailwindcss/issues",
-  "homepage": "https://tailwindcss.com",
   "exports": {
-    ".": {
-      "types": "./dist/lib.d.mts",
-      "style": "./index.css",
-      "require": "./dist/lib.js",
-      "import": "./dist/lib.mjs"
-    },
-    "./plugin": {
-      "require": "./dist/plugin.js",
-      "import": "./dist/plugin.mjs"
-    },
-    "./plugin.js": {
-      "require": "./dist/plugin.js",
-      "import": "./dist/plugin.mjs"
-    },
-    "./defaultTheme": {
-      "require": "./dist/default-theme.js",
-      "import": "./dist/default-theme.mjs"
-    },
-    "./defaultTheme.js": {
-      "require": "./dist/default-theme.js",
-      "import": "./dist/default-theme.mjs"
-    },
-    "./colors": {
-      "require": "./dist/colors.js",
-      "import": "./dist/colors.mjs"
-    },
-    "./colors.js": {
-      "require": "./dist/colors.js",
-      "import": "./dist/colors.mjs"
-    },
-    "./lib/util/flattenColorPalette": {
-      "require": "./dist/flatten-color-palette.js",
-      "import": "./dist/flatten-color-palette.mjs"
-    },
-    "./lib/util/flattenColorPalette.js": {
-      "require": "./dist/flatten-color-palette.js",
-      "import": "./dist/flatten-color-palette.mjs"
-    },
-    "./package.json": "./package.json",
-    "./index.css": "./index.css",
-    "./index": "./index.css",
-    "./preflight.css": "./preflight.css",
-    "./preflight": "./preflight.css",
-    "./theme.css": "./theme.css",
-    "./theme": "./theme.css",
-    "./utilities.css": "./utilities.css",
-    "./utilities": "./utilities.css"
+    ".": [
+      {
+        "import": {
+          "types": "./index.d.mts",
+          "default": "./dist/index.mjs"
+        },
+        "require": {
+          "types": "./index.d.ts",
+          "default": "./dist/index.js"
+        }
+      },
+      "./dist/index.js"
+    ],
+    "./sync": [
+      {
+        "import": {
+          "types": "./sync/index.d.mts",
+          "default": "./sync/index.mjs"
+        },
+        "require": {
+          "types": "./sync/index.d.ts",
+          "default": "./sync/index.js"
+        }
+      },
+      "./sync/index.js"
+    ]
   },
-  "publishConfig": {
-    "provenance": true,
-    "access": "public"
-  },
-  "style": "index.css",
   "files": [
+    "*.d.mts",
+    "*.d.ts",
     "dist",
-    "index.css",
-    "preflight.css",
-    "theme.css",
-    "utilities.css"
+    "sync"
   ],
-  "devDependencies": {
-    "@jridgewell/remapping": "^2.3.5",
-    "@types/node": "22.19.21",
-    "dedent": "1.7.2",
-    "lightningcss": "1.32.0",
-    "magic-string": "^0.30.21",
-    "source-map-js": "^1.2.1",
-    "@tailwindcss/oxide": "^4.3.3"
+  "modes": {
+    "sync": "src/sync.js",
+    "default": "src/async.js"
+  },
+  "engines": {
+    "node": ">=6"
   },
   "scripts": {
-    "lint": "tsc --noEmit",
-    "build": "tsup-node --env.NODE_ENV production",
-    "dev": "tsup-node --env.NODE_ENV development --watch",
-    "test:ui": "playwright test"
+    "build": "bundt",
+    "pretest": "npm run build",
+    "test": "uvu -r esm test -i fixtures"
+  },
+  "keywords": [
+    "find",
+    "parent",
+    "parents",
+    "directory",
+    "search",
+    "walk"
+  ],
+  "devDependencies": {
+    "bundt": "1.1.1",
+    "esm": "3.2.25",
+    "uvu": "0.3.3"
   }
 }
