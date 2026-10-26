@@ -1,84 +1,89 @@
 {
-  "name": "enhanced-resolve",
-  "version": "5.26.0",
-  "description": "Offers a async require.resolve function. It's highly configurable.",
-  "homepage": "https://github.com/webpack/enhanced-resolve#readme",
+  "name": "tailwindcss",
+  "version": "4.3.3",
+  "description": "A utility-first CSS framework for rapidly building custom user interfaces.",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/webpack/enhanced-resolve.git"
+    "url": "https://github.com/tailwindlabs/tailwindcss.git",
+    "directory": "packages/tailwindcss"
   },
-  "license": "MIT",
-  "author": "Tobias Koppers @sokra",
-  "main": "lib/index.js",
-  "browser": {
-    "process": "./lib/util/process-browser.js",
-    "module": "./lib/util/module-browser.js",
-    "path": "./lib/util/path-browser.js",
-    "url": "./lib/util/url-browser.js",
-    "graceful-fs": "./lib/util/graceful-fs-browser.js"
+  "bugs": "https://github.com/tailwindlabs/tailwindcss/issues",
+  "homepage": "https://tailwindcss.com",
+  "exports": {
+    ".": {
+      "types": "./dist/lib.d.mts",
+      "style": "./index.css",
+      "require": "./dist/lib.js",
+      "import": "./dist/lib.mjs"
+    },
+    "./plugin": {
+      "require": "./dist/plugin.js",
+      "import": "./dist/plugin.mjs"
+    },
+    "./plugin.js": {
+      "require": "./dist/plugin.js",
+      "import": "./dist/plugin.mjs"
+    },
+    "./defaultTheme": {
+      "require": "./dist/default-theme.js",
+      "import": "./dist/default-theme.mjs"
+    },
+    "./defaultTheme.js": {
+      "require": "./dist/default-theme.js",
+      "import": "./dist/default-theme.mjs"
+    },
+    "./colors": {
+      "require": "./dist/colors.js",
+      "import": "./dist/colors.mjs"
+    },
+    "./colors.js": {
+      "require": "./dist/colors.js",
+      "import": "./dist/colors.mjs"
+    },
+    "./lib/util/flattenColorPalette": {
+      "require": "./dist/flatten-color-palette.js",
+      "import": "./dist/flatten-color-palette.mjs"
+    },
+    "./lib/util/flattenColorPalette.js": {
+      "require": "./dist/flatten-color-palette.js",
+      "import": "./dist/flatten-color-palette.mjs"
+    },
+    "./package.json": "./package.json",
+    "./index.css": "./index.css",
+    "./index": "./index.css",
+    "./preflight.css": "./preflight.css",
+    "./preflight": "./preflight.css",
+    "./theme.css": "./theme.css",
+    "./theme": "./theme.css",
+    "./utilities.css": "./utilities.css",
+    "./utilities": "./utilities.css"
   },
-  "types": "types.d.ts",
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
+  "style": "index.css",
   "files": [
-    "lib",
-    "types",
-    "types.d.ts",
-    "LICENSE"
+    "dist",
+    "index.css",
+    "preflight.css",
+    "theme.css",
+    "utilities.css"
   ],
-  "scripts": {
-    "prepare": "husky",
-    "lint": "npm run lint:code && npm run lint:types && npm run lint:types-test && npm run fmt:check && npm run lint:spellcheck",
-    "lint:code": "eslint --cache .",
-    "lint:types": "tsc",
-    "lint:types-test": "tsc -p tsconfig.types.test.json",
-    "lint:spellcheck": "cspell --cache --no-must-find-files --quiet \"**/*.*\"",
-    "fmt": "npm run fmt:base -- --log-level warn --write",
-    "fmt:check": "npm run fmt:base -- --check",
-    "fmt:base": "node_modules/prettier/bin/prettier.cjs --cache --ignore-unknown .",
-    "fix": "npm run fix:code && npm run build:types",
-    "fix:code": "npm run lint:code -- --fix",
-    "build:types": "node -e \"require('fs').rmSync('types', { recursive: true, force: true })\" && tsc -p tsconfig.types.json && prettier --log-level warn --write \"types/**/*.d.ts\"",
-    "type-report": "rimraf coverage && npm run cover:types && npm run cover:report && open-cli coverage/lcov-report/index.html",
-    "pretest": "npm run lint",
-    "test": "npm run test:only",
-    "test:only": "node scripts/test.js",
-    "test:watch": "node scripts/test.js --watch",
-    "test:coverage": "node scripts/test.js --experimental-test-coverage --test-coverage-include=\"lib/**\" --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info",
-    "test:browser": "node --experimental-vm-modules test/smoke/browser-run.cjs",
-    "version": "changeset version",
-    "release": "changeset publish",
-    "benchmark": "node --max-old-space-size=4096 --hash-seed=1 --random-seed=1 --no-opt --predictable --predictable-gc-schedule --interpreted-frames-native-stack --allow-natives-syntax --expose-gc --no-concurrent-sweeping ./benchmark/run.mjs"
-  },
-  "lint-staged": {
-    "*.{js,cjs,mjs}": [
-      "eslint --cache --fix"
-    ],
-    "*": [
-      "prettier --cache --write --ignore-unknown",
-      "cspell --cache --no-must-find-files"
-    ]
-  },
-  "dependencies": {
-    "graceful-fs": "^4.2.4",
-    "tapable": "^2.3.3"
-  },
   "devDependencies": {
-    "@changesets/cli": "^3.0.2",
-    "@changesets/get-github-info": "^1.0.1",
-    "@codspeed/core": "^5.7.1",
-    "@types/graceful-fs": "^4.1.6",
-    "@types/node": "^24.10.4",
-    "cspell": "^10.0.0",
-    "eslint": "^9.39.2",
-    "eslint-config-webpack": "^4.9.5",
-    "husky": "^9.1.7",
-    "lint-staged": "^17.0.4",
-    "memfs": "^4.56.11",
-    "prettier": "^3.7.4",
-    "tinybench": "^6.0.0",
-    "typescript": "^6.0.2",
-    "webpack": "^5.107.2"
+    "@jridgewell/remapping": "^2.3.5",
+    "@types/node": "22.19.21",
+    "dedent": "1.7.2",
+    "lightningcss": "1.32.0",
+    "magic-string": "^0.30.21",
+    "source-map-js": "^1.2.1",
+    "@tailwindcss/oxide": "^4.3.3"
   },
-  "engines": {
-    "node": ">=10.13.0"
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "build": "tsup-node --env.NODE_ENV production",
+    "dev": "tsup-node --env.NODE_ENV development --watch",
+    "test:ui": "playwright test"
   }
 }
